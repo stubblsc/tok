@@ -40,6 +40,10 @@ gem 'sidekiq'
 
 # use react for views
 gem 'react-rails'
+# use bootstrap-sass for view templating
+gem 'bootstrap-sass'
+# allow devise views to be generates with bootstrap
+gem 'devise-bootstrapped'
 
 # Use Capistrano for deployment
 gem 'capistrano-rails', group: :development
