@@ -1,5 +1,5 @@
 class MessageRelayJob < ApplicationJob
-  queue_as :default
+  queue_as :messaging
 
   def perform(message)
     ActionCable.server.broadcast "chatrooms:#{message.chatroom.id}", {

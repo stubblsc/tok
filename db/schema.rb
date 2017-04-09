@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170409190148) do
+ActiveRecord::Schema.define(version: 20170410045732) do
 
   create_table "chatroom_users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer  "chatroom_id"
@@ -39,6 +39,30 @@ ActiveRecord::Schema.define(version: 20170409190148) do
     t.index ["user_id"], name: "index_messages_on_user_id", using: :btree
   end
 
+  create_table "rss_feed_items", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer  "rss_feed_id"
+    t.string   "title"
+    t.string   "link"
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.index ["rss_feed_id"], name: "index_rss_feed_items_on_rss_feed_id", using: :btree
+  end
+
+  create_table "rss_feeds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer  "user_id"
+    t.string   "title"
+    t.string   "link"
+    t.string   "description"
+    t.string   "language"
+    t.datetime "pub_date"
+    t.datetime "last_build_date"
+    t.string   "username"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.index ["user_id"], name: "index_rss_feeds_on_user_id", using: :btree
+  end
+
   create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "email",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false
@@ -53,6 +77,7 @@ ActiveRecord::Schema.define(version: 20170409190148) do
     t.string   "username"
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
+    t.boolean  "is_rss_feed_user"
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
@@ -61,4 +86,6 @@ ActiveRecord::Schema.define(version: 20170409190148) do
   add_foreign_key "chatroom_users", "users"
   add_foreign_key "messages", "chatrooms"
   add_foreign_key "messages", "users"
+  add_foreign_key "rss_feed_items", "rss_feeds"
+  add_foreign_key "rss_feeds", "users"
 end

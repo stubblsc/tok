@@ -1,6 +1,6 @@
 class ChatroomUser < ApplicationRecord
-  belongs_to :chatroom
-  belongs_to :user
+  belongs_to :chatroom, inverse_of: :chatroom_users
+  belongs_to :user, inverse_of: :chatroom_users
 
   before_create :set_last_read
 
