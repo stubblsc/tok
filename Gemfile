@@ -37,6 +37,8 @@ gem 'devise'
 
 # use sidekiq for job queue
 gem 'sidekiq'
+# use clockwork for running recurring jobs
+gem 'clockwork'
 
 # use react for views
 gem 'react-rails'

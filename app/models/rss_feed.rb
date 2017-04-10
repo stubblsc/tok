@@ -4,8 +4,10 @@ class RssFeed < ApplicationRecord
 
   after_create :create_rss_feed_user
 
-  def sanitized_description
-    self.description.partition('<').first
+  def self.enqueue_feed_for_processing
+    RssFeed.each do |feed|
+      RssDataScraperJob.perform_async(feed.id)
+    end
   end
 
   def pull_rss_feed_items
