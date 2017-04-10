@@ -1,6 +1,7 @@
 class RssFeed < ApplicationRecord
   has_many :rss_feed_items, inverse_of: :rss_feed
   belongs_to :user, inverse_of: :rss_feed
+  has_many :chatrooms, through: :categories, inverse_of: :rss_feeds
 
   after_create :create_rss_feed_user
 
@@ -18,9 +19,6 @@ class RssFeed < ApplicationRecord
                                     description: feed_item.description,
                                     link: feed_item.link)
     end
-  end
-
-  def post_message
   end
 
 private

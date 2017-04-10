@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170410045732) do
+ActiveRecord::Schema.define(version: 20170410071402) do
+
+  create_table "categories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string   "name"
+    t.integer  "chatroom_id"
+    t.integer  "rss_feed_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.index ["chatroom_id"], name: "index_categories_on_chatroom_id", using: :btree
+    t.index ["rss_feed_id"], name: "index_categories_on_rss_feed_id", using: :btree
+  end
 
   create_table "chatroom_users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer  "chatroom_id"
@@ -27,6 +37,11 @@ ActiveRecord::Schema.define(version: 20170410045732) do
     t.datetime "created_at",                     null: false
     t.datetime "updated_at",                     null: false
     t.boolean  "direct_message", default: false
+  end
+
+  create_table "chatrooms_rss_feed_items", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "chatroom_id",      null: false
+    t.integer "rss_feed_item_id", null: false
   end
 
   create_table "messages", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -82,6 +97,8 @@ ActiveRecord::Schema.define(version: 20170410045732) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
 
+  add_foreign_key "categories", "chatrooms"
+  add_foreign_key "categories", "rss_feeds"
   add_foreign_key "chatroom_users", "chatrooms"
   add_foreign_key "chatroom_users", "users"
   add_foreign_key "messages", "chatrooms"
