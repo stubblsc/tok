@@ -9,6 +9,8 @@ class Chatroom < ApplicationRecord
   scope :public_channels, -> {where(direct_message: false)}
   scope :direct_messages, -> {where(direct_message: true)}
 
+  MAX_USERS = 10
+
   def self.direct_message_for_users(users)
     user_ids = users.map(&:id).sort
     name = "DM:#{user_ids.join(":")}"
@@ -34,5 +36,30 @@ class Chatroom < ApplicationRecord
     Message.create(chatroom_id: self.id, user_id: self.user_id, type: 'topic',
                     topic_url: rss_feed_item.link,
                     text: rss_feed_item.sanitized_description)
+  end
+
+  def add_user_to_chatroom(user_id)
+    user = User.find_by(id: user_id)
+
+    unless self.users >= MAX_USERS
+      self.users << user
+      self.save
+    else
+      new_chatroom = create_new_chatroom
+      new_chatroom.users << user
+      new_chatroom.save
+    end
+  end
+
+  private
+
+  def create_new_chatroom
+    new_chatroom = self.dup
+
+    new_chatroom.messages.delete_all
+    new_chatroom.users.delete_all
+
+    new_chatroom.save
+    new_chatroom
   end
 end

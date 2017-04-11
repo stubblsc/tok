@@ -21,7 +21,7 @@ class RssFeed < ApplicationRecord
     end
   end
 
-private
+  private
 
   def setup_feed
     pull_feed_info
