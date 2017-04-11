@@ -6,8 +6,8 @@ class Chatroom < ApplicationRecord
   has_many :categories, inverse_of: :chatrooms
   has_many :rss_feeds, through: :categories, inverse_of: :chatrooms
 
-  scope :public_channels, ->{ where(direct_message: false) }
-  scope :direct_messages, ->{ where(direct_message: true) }
+  scope :public_channels, -> {where(direct_message: false)}
+  scope :direct_messages, -> {where(direct_message: true)}
 
   def self.direct_message_for_users(users)
     user_ids = users.map(&:id).sort
@@ -28,7 +28,11 @@ class Chatroom < ApplicationRecord
     RssFeedItem.current.where(rss_feed_id: self.rss_feeds.map.pluck(:id)).unused(self.id)
   end
 
-  def get_random_feed_item(chatroom_id)
-    self.potential_feed_items.sample
+  def post_new_topic(chatroom_id)
+    rss_feed_item = self.potential_feed_items.sample
+
+    Message.create(chatroom_id: self.id, user_id: self.user_id, type: 'topic',
+                    topic_url: rss_feed_item.link,
+                    text: rss_feed_item.sanitized_description)
   end
 end
