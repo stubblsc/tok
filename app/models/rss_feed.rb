@@ -1,7 +1,9 @@
+require 'rss'
+
 class RssFeed < ApplicationRecord
   has_many :rss_feed_items, inverse_of: :rss_feed
   belongs_to :user, inverse_of: :rss_feed
-  has_many :chatrooms, through: :categories, inverse_of: :rss_feeds
+  has_and_belongs_to_many :categories, inverse_of: :rss_feeds
 
   after_initialize :setup_feed
 

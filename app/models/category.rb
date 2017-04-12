@@ -1,4 +1,4 @@
 class Category < ApplicationRecord
-  belongs_to :chatroom, inverse_of: :categories
-  belongs_to :rss_feed, inverse_of: :categories
+  has_many :chatroom, inverse_of: :categories
+  has_and_belongs_to_many :rss_feeds, inverse_of: :categories
 end

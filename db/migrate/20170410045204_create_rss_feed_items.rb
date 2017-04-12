@@ -4,7 +4,7 @@ class CreateRssFeedItems < ActiveRecord::Migration[5.0]
       t.references :rss_feed, foreign_key: true
       t.string :title
       t.string :link
-      t.string :description
+      t.text :description
 
       t.timestamps
     end

@@ -34,6 +34,8 @@ gem 'redis', '~> 3.0'
 
 # use devise for user authentication
 gem 'devise'
+# use pundit for authorization
+gem 'pundit'
 
 # use sidekiq for job queue
 gem 'sidekiq'

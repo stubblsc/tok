@@ -10,16 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170411054353) do
+ActiveRecord::Schema.define(version: 20170412045014) do
 
   create_table "categories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "name"
-    t.integer  "chatroom_id"
-    t.integer  "rss_feed_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-    t.index ["chatroom_id"], name: "index_categories_on_chatroom_id", using: :btree
-    t.index ["rss_feed_id"], name: "index_categories_on_rss_feed_id", using: :btree
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "categories_rss_feeds", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "category_id", null: false
+    t.integer "rss_feed_id", null: false
   end
 
   create_table "chatroom_users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -34,9 +35,11 @@ ActiveRecord::Schema.define(version: 20170411054353) do
 
   create_table "chatrooms", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "name"
+    t.integer  "categories_id"
     t.datetime "created_at",                     null: false
     t.datetime "updated_at",                     null: false
     t.boolean  "direct_message", default: false
+    t.index ["categories_id"], name: "index_chatrooms_on_categories_id", using: :btree
   end
 
   create_table "chatrooms_rss_feed_items", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -47,11 +50,11 @@ ActiveRecord::Schema.define(version: 20170411054353) do
   create_table "messages", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer  "chatroom_id"
     t.integer  "user_id"
+    t.integer  "type"
     t.text     "body",        limit: 65535
+    t.string   "topic_url"
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
-    t.integer  "type"
-    t.string   "topic_link"
     t.index ["chatroom_id"], name: "index_messages_on_chatroom_id", using: :btree
     t.index ["user_id"], name: "index_messages_on_user_id", using: :btree
   end
@@ -60,9 +63,9 @@ ActiveRecord::Schema.define(version: 20170411054353) do
     t.integer  "rss_feed_id"
     t.string   "title"
     t.string   "link"
-    t.string   "description"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.text     "description", limit: 65535
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
     t.index ["rss_feed_id"], name: "index_rss_feed_items_on_rss_feed_id", using: :btree
   end
 
@@ -99,10 +102,9 @@ ActiveRecord::Schema.define(version: 20170411054353) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
 
-  add_foreign_key "categories", "chatrooms"
-  add_foreign_key "categories", "rss_feeds"
   add_foreign_key "chatroom_users", "chatrooms"
   add_foreign_key "chatroom_users", "users"
+  add_foreign_key "chatrooms", "categories", column: "categories_id"
   add_foreign_key "messages", "chatrooms"
   add_foreign_key "messages", "users"
   add_foreign_key "rss_feed_items", "rss_feeds"
