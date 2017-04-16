@@ -2,10 +2,9 @@ require 'rss'
 
 class RssFeed < ApplicationRecord
   has_many :rss_feed_items, inverse_of: :rss_feed
-  belongs_to :user, inverse_of: :rss_feed
   has_and_belongs_to_many :categories, inverse_of: :rss_feeds
 
-  after_initialize :setup_feed
+  after_create :setup_feed
 
   def self.enqueue_feed_for_processing
     RssFeed.each do |feed|
@@ -26,8 +25,7 @@ class RssFeed < ApplicationRecord
   private
 
   def setup_feed
-    pull_feed_info
-    create_rss_feed_user
+    RssDataScraperJob.perform_async(self.id)
   end
 
   def pull_feed_info

@@ -2,9 +2,9 @@ class Chatroom < ApplicationRecord
   has_many :chatroom_users, inverse_of: :chatroom, dependent: :destroy
   has_many :users, through: :chatroom_users, inverse_of: :chatrooms
   has_many :messages, inverse_of: :chatroom, dependent: :destroy
-  has_and_belongs_to_many :rss_feed_items, inverse_of: :chatrooms
-  has_many :categories, inverse_of: :chatrooms
   has_many :rss_feeds, through: :categories, inverse_of: :chatrooms
+  has_and_belongs_to_many :rss_feed_items, inverse_of: :chatrooms
+  belongs_to :category, inverse_of: :chatrooms
 
   scope :public_channels, -> {where(direct_message: false)}
   scope :direct_messages, -> {where(direct_message: true)}
@@ -27,15 +27,17 @@ class Chatroom < ApplicationRecord
   end
 
   def potential_feed_items
-    RssFeedItem.current.where(rss_feed_id: self.rss_feeds.map.pluck(:id)).unused(self.id)
+    RssFeedItem.current.where(rss_feed_id: self.category.rss_feeds.pluck(:id)).unused(self.id)
   end
 
-  def post_new_topic(chatroom_id)
-    rss_feed_item = self.potential_feed_items.sample
+  def post_new_topic
+    new_topic = self.potential_feed_items.sample
 
-    Message.create(chatroom_id: self.id, user_id: self.user_id, type: 'topic',
-                    topic_url: rss_feed_item.link,
-                    text: rss_feed_item.sanitized_description)
+    self.rss_feed_items << new_topic
+
+    Message.create(chatroom_id: self.id, user_id: User.last.id,
+                    type: :topic, topic_url: new_topic.link,
+                    body: new_topic.sanitized_description)
   end
 
   def add_user_to_chatroom(user_id)
@@ -45,7 +47,7 @@ class Chatroom < ApplicationRecord
       self.users << user
       self.save
     else
-      new_chatroom = create_new_chatroom
+      new_chatroom = duplicate_chatroom
       new_chatroom.users << user
       new_chatroom.save
     end
@@ -53,7 +55,7 @@ class Chatroom < ApplicationRecord
 
   private
 
-  def create_new_chatroom
+  def duplicate_chatroom
     new_chatroom = self.dup
 
     new_chatroom.messages.delete_all

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170412045014) do
+ActiveRecord::Schema.define(version: 20170412055900) do
 
   create_table "categories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "name"
@@ -35,11 +35,11 @@ ActiveRecord::Schema.define(version: 20170412045014) do
 
   create_table "chatrooms", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "name"
-    t.integer  "categories_id"
+    t.integer  "category_id"
     t.datetime "created_at",                     null: false
     t.datetime "updated_at",                     null: false
     t.boolean  "direct_message", default: false
-    t.index ["categories_id"], name: "index_chatrooms_on_categories_id", using: :btree
+    t.index ["category_id"], name: "index_chatrooms_on_category_id", using: :btree
   end
 
   create_table "chatrooms_rss_feed_items", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -70,7 +70,6 @@ ActiveRecord::Schema.define(version: 20170412045014) do
   end
 
   create_table "rss_feeds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "user_id"
     t.string   "title"
     t.string   "link"
     t.string   "description"
@@ -80,7 +79,6 @@ ActiveRecord::Schema.define(version: 20170412045014) do
     t.string   "username"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
-    t.index ["user_id"], name: "index_rss_feeds_on_user_id", using: :btree
   end
 
   create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -104,9 +102,8 @@ ActiveRecord::Schema.define(version: 20170412045014) do
 
   add_foreign_key "chatroom_users", "chatrooms"
   add_foreign_key "chatroom_users", "users"
-  add_foreign_key "chatrooms", "categories", column: "categories_id"
+  add_foreign_key "chatrooms", "categories"
   add_foreign_key "messages", "chatrooms"
   add_foreign_key "messages", "users"
   add_foreign_key "rss_feed_items", "rss_feeds"
-  add_foreign_key "rss_feeds", "users"
 end
