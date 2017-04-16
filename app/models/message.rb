@@ -5,4 +5,7 @@ class Message < ApplicationRecord
   enum type: [:user_post, :topic]
 
   self.inheritance_column = nil
+
+  scope :user_posts, -> {where(type: :user_post)}
+  scope :topics,     -> {where(type: :topic)}
 end

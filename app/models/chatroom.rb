@@ -26,18 +26,32 @@ class Chatroom < ApplicationRecord
     end
   end
 
+  def topics
+    self.messages.topics
+  end
+
+  def user_posts
+    self.messages.user_posts
+  end
+
   def potential_feed_items
-    RssFeedItem.current.where(rss_feed_id: self.category.rss_feeds.pluck(:id)).unused(self.id)
+    RssFeedItem.current.unused(self.id)
+  end
+
+  def get_new_topic
+    potential_feed_items.sample
   end
 
   def post_new_topic
-    new_topic = self.potential_feed_items.sample
+    new_topic = self.get_new_topic
 
     self.rss_feed_items << new_topic
 
     Message.create(chatroom_id: self.id, user_id: User.last.id,
                     type: :topic, topic_url: new_topic.link,
                     body: new_topic.sanitized_description)
+
+    self.save
   end
 
   def add_user_to_chatroom(user_id)
