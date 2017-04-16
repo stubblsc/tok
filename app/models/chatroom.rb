@@ -45,13 +45,9 @@ class Chatroom < ApplicationRecord
   def post_new_topic
     new_topic = self.get_new_topic
 
-    self.rss_feed_items << new_topic
-
     Message.create(chatroom_id: self.id, user_id: User.last.id,
                     type: :topic, topic_url: new_topic.link,
                     body: new_topic.sanitized_description)
-
-    self.save
   end
 
   def add_user_to_chatroom(user_id)
