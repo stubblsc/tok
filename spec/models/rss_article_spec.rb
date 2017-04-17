@@ -1,6 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe RssArticle, type: :model do
+  before :all do
+    RssFeed.skip_callback(:create, :after, :setup_feed)
+  end
+
+  after :all do
+    RssFeed.set_callback(:create, :after, :setup_feed)
+  end
+  
   subject{build :rss_article}
 
   describe 'sanity check' do
@@ -29,8 +37,8 @@ RSpec.describe RssArticle, type: :model do
 
   describe '#sanitized_description' do
     it 'should return the description substring from beginning till first <' do
-      index = subject.description.index('>')
-      substring = if index == -1
+      index = subject.description.index('<')
+      substring = if index.nil? || index == -1
                     subject.description
                   else
                     subject.description[0...index]

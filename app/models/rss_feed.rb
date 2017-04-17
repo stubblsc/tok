@@ -8,7 +8,7 @@ class RssFeed < ApplicationRecord
 
   def self.enqueue_feed_for_processing
     RssFeed.each do |feed|
-      RssDataScraperJob.perform_async(feed.id)
+      RssDataScraperJob.perform_now(feed.id)
     end
   end
 
