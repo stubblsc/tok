@@ -1,7 +1,7 @@
 require 'rss'
 
 class RssFeed < ApplicationRecord
-  has_many :rss_feed_items, inverse_of: :rss_feed
+  has_many :rss_articles, inverse_of: :rss_feed
   has_and_belongs_to_many :categories, inverse_of: :rss_feeds
 
   after_create :setup_feed
@@ -12,11 +12,11 @@ class RssFeed < ApplicationRecord
     end
   end
 
-  def pull_rss_feed_items
+  def pull_rss_articles
     feed = RSS::Parser.parse(open(self.link)).channel
 
     feed.items.each do |feed_item|
-      RssFeedItem.find_or_create_by(rss_feed_id: self.id, title: feed_item.title,
+      RssArticle.find_or_create_by(rss_feed_id: self.id, title: feed_item.title,
                                     description: feed_item.description,
                                     link: feed_item.link)
     end

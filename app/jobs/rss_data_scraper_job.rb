@@ -6,6 +6,6 @@ class RssDataScraperJob < ApplicationJob
   def perform(rss_feed_id)
     feed = RssFeed.find_by(id: rss_feed_id)
 
-    feed.pull_rss_feed_items
+    feed.pull_rss_articles
   end
 end

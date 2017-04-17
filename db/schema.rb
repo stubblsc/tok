@@ -42,9 +42,9 @@ ActiveRecord::Schema.define(version: 20170412055900) do
     t.index ["category_id"], name: "index_chatrooms_on_category_id", using: :btree
   end
 
-  create_table "chatrooms_rss_feed_items", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "chatrooms_rss_articles", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "chatroom_id",      null: false
-    t.integer "rss_feed_item_id", null: false
+    t.integer "rss_article_id", null: false
   end
 
   create_table "messages", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -59,14 +59,14 @@ ActiveRecord::Schema.define(version: 20170412055900) do
     t.index ["user_id"], name: "index_messages_on_user_id", using: :btree
   end
 
-  create_table "rss_feed_items", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "rss_articles", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer  "rss_feed_id"
     t.string   "title"
     t.string   "link"
     t.text     "description", limit: 65535
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
-    t.index ["rss_feed_id"], name: "index_rss_feed_items_on_rss_feed_id", using: :btree
+    t.index ["rss_feed_id"], name: "index_rss_articles_on_rss_feed_id", using: :btree
   end
 
   create_table "rss_feeds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -105,5 +105,5 @@ ActiveRecord::Schema.define(version: 20170412055900) do
   add_foreign_key "chatrooms", "categories"
   add_foreign_key "messages", "chatrooms"
   add_foreign_key "messages", "users"
-  add_foreign_key "rss_feed_items", "rss_feeds"
+  add_foreign_key "rss_articles", "rss_feeds"
 end

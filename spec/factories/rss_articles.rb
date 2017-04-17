@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :rss_feed_item do
+  factory :rss_article do
     rss_feed
     title Faker::Lorem.sentence(4)
     link Faker::Internet.url

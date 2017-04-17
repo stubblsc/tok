@@ -3,7 +3,7 @@ class Chatroom < ApplicationRecord
   has_many :users, through: :chatroom_users, inverse_of: :chatrooms
   has_many :messages, inverse_of: :chatroom, dependent: :destroy
   has_many :rss_feeds, through: :categories, inverse_of: :chatrooms
-  has_and_belongs_to_many :rss_feed_items, inverse_of: :chatrooms
+  has_and_belongs_to_many :rss_articles, inverse_of: :chatrooms
   belongs_to :category, inverse_of: :chatrooms
 
   scope :public_channels, -> {where(direct_message: false)}
@@ -35,7 +35,7 @@ class Chatroom < ApplicationRecord
   end
 
   def potential_feed_items
-    RssFeedItem.current.unused(self.id)
+    RssArticle.current.unused(self.id)
   end
 
   def get_new_topic
