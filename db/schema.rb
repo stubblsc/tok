@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170412055900) do
+ActiveRecord::Schema.define(version: 20170412045014) do
 
   create_table "categories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "name"
@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(version: 20170412055900) do
   end
 
   create_table "chatrooms_rss_articles", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer "chatroom_id",      null: false
+    t.integer "chatroom_id",    null: false
     t.integer "rss_article_id", null: false
   end
 
@@ -76,7 +76,6 @@ ActiveRecord::Schema.define(version: 20170412055900) do
     t.string   "language"
     t.datetime "pub_date"
     t.datetime "last_build_date"
-    t.string   "username"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
   end
@@ -95,7 +94,6 @@ ActiveRecord::Schema.define(version: 20170412055900) do
     t.string   "username"
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
-    t.boolean  "is_rss_feed_user"
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end

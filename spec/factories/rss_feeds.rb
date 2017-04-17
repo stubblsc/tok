@@ -1,10 +1,8 @@
 FactoryGirl.define do
   factory :rss_feed do
-    user
     title Faker::Lorem.sentence(4)
-    link Faker::Internet.url
+    link 'http://rss.cnn.com/rss/cnn_topstories.rss'
     description Faker::Lorem.sentence(8)
-    username Faker::Internet.user_name
 
     trait :has_language do
       language Faker::Lorem.word

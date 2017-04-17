@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :category do
-    name "MyString"
-    chatroom nil
-    rss_feed nil
+    name Faker::Lorem.sentence(2)
+    chatroom
+    rss_feed
   end
 end

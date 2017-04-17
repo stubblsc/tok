@@ -1,4 +1,4 @@
-class ChangeTopicJobJob < ApplicationJob
+class ChangeTopicJob < ApplicationJob
   queue_as :change_topic
 
   def perform(chatroom_id)

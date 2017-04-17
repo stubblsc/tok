@@ -7,7 +7,6 @@ class CreateRssFeeds < ActiveRecord::Migration[5.0]
       t.string :language
       t.datetime :pub_date
       t.datetime :last_build_date
-      t.string :username
 
       t.timestamps
     end

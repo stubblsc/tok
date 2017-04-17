@@ -25,7 +25,7 @@ class RssFeed < ApplicationRecord
   private
 
   def setup_feed
-    RssDataScraperJob.perform_async(self.id)
+    RssDataScraperJob.perform_now(self.id)
   end
 
   def pull_feed_info
