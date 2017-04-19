@@ -2,13 +2,13 @@ require 'rails_helper'
 
 RSpec.describe RssArticle, type: :model do
   before :all do
-    RssFeed.skip_callback(:create, :after, :setup_feed)
+    RssFeed.skip_callback(:create, :around, :process_rss_feed)
   end
 
   after :all do
-    RssFeed.set_callback(:create, :after, :setup_feed)
+    RssFeed.set_callback(:create, :around, :process_rss_feed)
   end
-  
+
   subject{build :rss_article}
 
   describe 'sanity check' do
@@ -32,19 +32,6 @@ RSpec.describe RssArticle, type: :model do
     let(:no_rss_feed){build(:rss_article, :no_rss_feed)}
     it 'must have a rss feed' do
       expect(no_rss_feed).to be_invalid
-    end
-  end
-
-  describe '#sanitized_description' do
-    it 'should return the description substring from beginning till first <' do
-      index = subject.description.index('<')
-      substring = if index.nil? || index == -1
-                    subject.description
-                  else
-                    subject.description[0...index]
-                  end
-
-      expect(subject.sanitized_description).to eq substring
     end
   end
 end

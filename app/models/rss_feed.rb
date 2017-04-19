@@ -4,44 +4,30 @@ class RssFeed < ApplicationRecord
   has_many :rss_articles, inverse_of: :rss_feed
   has_and_belongs_to_many :categories, inverse_of: :rss_feeds
 
-  after_create :setup_feed
+  validates :title,       presence: true
+  validates :link,        presence: true
+  validates :description, presence: true
 
-  def self.enqueue_feed_for_processing
-    RssFeed.each do |feed|
-      RssDataScraperJob.perform_now(feed.id)
+  around_create :process_rss_feed
+
+  def self.scrape_articles_all_feeds
+    RssFeed.find_each do |feed|
+      feed.scrape_articles
     end
   end
 
-  def pull_rss_articles
-    feed = RSS::Parser.parse(open(self.link)).channel
-
-    feed.items.each do |feed_item|
-      RssArticle.find_or_create_by(rss_feed_id: self.id, title: feed_item.title,
-                                    description: feed_item.description,
-                                    link: feed_item.link)
-    end
+  def scrape_articles
+    RssDataScraperJob.perform_now(id)
   end
 
   private
 
-  def setup_feed
-    RssDataScraperJob.perform_now(self.id)
-  end
+  def process_rss_feed
+    rss_reader = RssReader.new(link)
+    assign_attributes(rss_reader.channel_data)
 
-  def pull_feed_info
-    feed = RSS::Parser.parse(open(self.link)).channel
+    yield
 
-    self.title = feed.title
-    self.description = feed.description
-    self.language = feed.language
-    self.pub_date = feed.pubDate
-    self.last_build_date = last_build_date
-  end
-
-  def create_rss_feed_user
-    self.user = User.create(email: "#{self.username}@tok.com", username: self.username,
-                            password: self.username, password_confirmation: self.username,
-                            is_rss_feed_user: true)
-    self.save
+    scrape_articles
   end
 end
