@@ -1,14 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe RssArticle, type: :model do
-  before :all do
-    RssFeed.skip_callback(:create, :around, :process_rss_feed)
-  end
-
-  after :all do
-    RssFeed.set_callback(:create, :around, :process_rss_feed)
-  end
-
   subject{build :rss_article}
 
   describe 'sanity check' do

@@ -2,6 +2,8 @@ class Category < ApplicationRecord
   has_many :chatrooms, inverse_of: :category
   has_and_belongs_to_many :rss_feeds, inverse_of: :categories
 
+  validates :name, presence: true
+
   after_create :create_chatroom
 
   private

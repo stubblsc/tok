@@ -8,26 +8,17 @@ class RssFeed < ApplicationRecord
   validates :link,        presence: true
   validates :description, presence: true
 
-  around_create :process_rss_feed
-
-  def self.scrape_articles_all_feeds
-    RssFeed.find_each do |feed|
-      feed.scrape_articles
-    end
-  end
+  before_validation :process_rss_feed, on: :create
+  after_create :scrape_articles
 
   def scrape_articles
-    RssDataScraperJob.perform_now(id)
+    RssDataScraperJob.perform_later(id)
   end
 
   private
-
+  
   def process_rss_feed
     rss_reader = RssReader.new(link)
     assign_attributes(rss_reader.channel_data)
-
-    yield
-
-    scrape_articles
   end
 end

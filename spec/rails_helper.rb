@@ -5,8 +5,9 @@ require File.expand_path('../../config/environment', __FILE__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'spec_helper'
 require 'rspec/rails'
-require 'vcr'
 # Add additional requires below this line. Rails is not loaded until this point!
+require 'sidekiq/testing'
+require 'vcr'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -59,6 +60,9 @@ RSpec.configure do |config|
   # include factory girl syntax methods
   config.include FactoryGirl::Syntax::Methods
 
+  # include activejob support
+  config.include ActiveJob::TestHelper
+
   # setup database cleaner
   config.before(:suite) do
     DatabaseCleaner.strategy = :transaction
@@ -75,5 +79,18 @@ RSpec.configure do |config|
   VCR.configure do |c|
     c.cassette_library_dir     = 'spec/cassettes'
     c.hook_into                  :webmock
+  end
+
+  # clear all sidekiq workers before each test
+  RSpec.configure do |config|
+    config.before(:each) do
+      Sidekiq::Worker.clear_all
+    end
+  end
+
+  # skip callbacks and test separate
+  config.before(:suite) do
+    RssFeed.skip_callback(:validation, :before, :process_rss_feed)
+    RssFeed.skip_callback(:create, :after, :scrape_articles)
   end
 end

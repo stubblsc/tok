@@ -3,12 +3,6 @@ require 'rails_helper'
 RSpec.describe RssFeed, type: :model do
   subject{build :rss_feed}
 
-  before :all do
-    VCR.use_cassette('rss_feed') do
-      # subject.
-    end
-  end
-
   describe 'sanity check' do
     it{expect(subject).to be_valid}
 
@@ -25,6 +19,18 @@ RSpec.describe RssFeed, type: :model do
     let(:no_description){build(:rss_feed, :no_description)}
     it 'must have a description' do
       expect(no_description).to be_invalid
+    end
+  end
+
+  describe '#scrape_articles' do
+    it 'should enqueue a worker' do
+      subject.save
+
+      VCR.use_cassette('rss_feed') do
+        subject.scrape_articles
+      end
+
+      expect(enqueued_jobs.size).to eq 1
     end
   end
 end

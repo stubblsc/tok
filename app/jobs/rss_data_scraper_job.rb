@@ -9,14 +9,13 @@ class RssDataScraperJob < ApplicationJob
     articles = []
 
     rss_reader.article_data.each do |article_params|
-      article_params[:feed_id] = rss_feed_id
+      article_params[:rss_feed_id] = rss_feed_id
 
       article = RssArticle.find_or_initialize_by(article_params)
 
-      articles << article if article.new_record?
+      feed.rss_articles << article if article.new_record?
     end
-
-    feed.articles = articles
+    
     feed.save
   end
 end
