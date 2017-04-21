@@ -2,9 +2,11 @@ class Chatroom < ApplicationRecord
   has_many :chatroom_users, inverse_of: :chatroom, dependent: :destroy
   has_many :users, through: :chatroom_users, inverse_of: :chatrooms
   has_many :messages, inverse_of: :chatroom, dependent: :destroy
-  has_many :rss_feeds, through: :categories, inverse_of: :chatrooms
+  has_many :rss_feeds, through: :category, inverse_of: :chatrooms
   has_and_belongs_to_many :rss_articles, inverse_of: :chatrooms
   belongs_to :category, inverse_of: :chatrooms
+
+  validates :name, presence: true
 
   scope :public_channels, -> {where(direct_message: false)}
   scope :direct_messages, -> {where(direct_message: true)}
@@ -53,7 +55,7 @@ class Chatroom < ApplicationRecord
   def add_user_to_chatroom(user_id)
     user = User.find_by(id: user_id)
 
-    unless self.users >= MAX_USERS
+    unless self.users.count >= MAX_USERS
       self.users << user
       self.save
     else

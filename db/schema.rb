@@ -50,11 +50,11 @@ ActiveRecord::Schema.define(version: 20170412045014) do
   create_table "messages", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer  "chatroom_id"
     t.integer  "user_id"
-    t.integer  "type"
-    t.text     "body",        limit: 65535
+    t.integer  "message_type"
+    t.text     "body",         limit: 65535
     t.string   "topic_url"
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
     t.index ["chatroom_id"], name: "index_messages_on_chatroom_id", using: :btree
     t.index ["user_id"], name: "index_messages_on_user_id", using: :btree
   end
